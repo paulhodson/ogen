@@ -161,7 +161,10 @@ func (s *tstorage) merge(other *tstorage) error {
 		if _, ok := s.refs[ref]; ok {
 			return errors.Errorf("reference conflict: %q", ref)
 		}
-		if _, ok := s.types[t.Name]; ok {
+		if confT, ok := s.types[t.Name]; ok {
+			if t.Equal(confT) {
+				continue
+			}
 			return errors.Errorf("reference type %q name conflict: %q", ref, t.Name)
 		}
 	}
@@ -176,6 +179,9 @@ func (s *tstorage) merge(other *tstorage) error {
 					t.Implement(iface)
 				}
 			} else {
+				if t.Equal(confT) {
+					continue
+				}
 				return errors.Errorf("anonymous type name conflict: %q", name)
 			}
 		}
