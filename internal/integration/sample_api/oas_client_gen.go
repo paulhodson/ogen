@@ -12,7 +12,7 @@ import (
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/metric"
-	semconv "go.opentelemetry.io/otel/semconv/v1.19.0"
+	semconv "go.opentelemetry.io/otel/semconv/v1.26.0"
 	"go.opentelemetry.io/otel/trace"
 
 	"github.com/ogen-go/ogen/conv"
@@ -153,6 +153,10 @@ type Invoker interface {
 	//
 	// GET /testInlineOneof
 	TestInlineOneof(ctx context.Context) (*TestInlineOneOf, error)
+	// TestIssue1310 invokes testIssue1310 operation.
+	//
+	// GET /testIssue1310
+	TestIssue1310(ctx context.Context) (*Issue1310, error)
 	// TestNullableOneofs invokes testNullableOneofs operation.
 	//
 	// GET /testNullableOneofs
@@ -234,7 +238,7 @@ func (c *Client) DataGetFormat(ctx context.Context, params DataGetFormatParams) 
 func (c *Client) sendDataGetFormat(ctx context.Context, params DataGetFormatParams) (res string, err error) {
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("dataGetFormat"),
-		semconv.HTTPMethodKey.String("GET"),
+		semconv.HTTPRequestMethodKey.String("GET"),
 		semconv.HTTPRouteKey.String("/name/{id}/{foo}1234{bar}-{baz}!{kek}"),
 	}
 
@@ -407,7 +411,7 @@ func (c *Client) sendDefaultTest(ctx context.Context, request *DefaultTest, para
 	}
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("defaultTest"),
-		semconv.HTTPMethodKey.String("POST"),
+		semconv.HTTPRequestMethodKey.String("POST"),
 		semconv.HTTPRouteKey.String("/defaultTest"),
 	}
 
@@ -503,7 +507,7 @@ func (c *Client) ErrorGet(ctx context.Context) (*ErrorStatusCode, error) {
 func (c *Client) sendErrorGet(ctx context.Context) (res *ErrorStatusCode, err error) {
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("errorGet"),
-		semconv.HTTPMethodKey.String("GET"),
+		semconv.HTTPRequestMethodKey.String("GET"),
 		semconv.HTTPRouteKey.String("/error"),
 	}
 
@@ -575,7 +579,7 @@ func (c *Client) FoobarGet(ctx context.Context, params FoobarGetParams) (FoobarG
 func (c *Client) sendFoobarGet(ctx context.Context, params FoobarGetParams) (res FoobarGetRes, err error) {
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("foobarGet"),
-		semconv.HTTPMethodKey.String("GET"),
+		semconv.HTTPRequestMethodKey.String("GET"),
 		semconv.HTTPRouteKey.String("/foobar"),
 	}
 
@@ -695,7 +699,7 @@ func (c *Client) sendFoobarPost(ctx context.Context, request OptPet) (res Foobar
 	}
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("foobarPost"),
-		semconv.HTTPMethodKey.String("POST"),
+		semconv.HTTPRequestMethodKey.String("POST"),
 		semconv.HTTPRouteKey.String("/foobar"),
 	}
 
@@ -767,7 +771,7 @@ func (c *Client) FoobarPut(ctx context.Context) (*FoobarPutDef, error) {
 
 func (c *Client) sendFoobarPut(ctx context.Context) (res *FoobarPutDef, err error) {
 	otelAttrs := []attribute.KeyValue{
-		semconv.HTTPMethodKey.String("PUT"),
+		semconv.HTTPRequestMethodKey.String("PUT"),
 		semconv.HTTPRouteKey.String("/foobar"),
 	}
 
@@ -837,7 +841,7 @@ func (c *Client) NoAdditionalPropertiesTest(ctx context.Context) (*NoAdditionalP
 func (c *Client) sendNoAdditionalPropertiesTest(ctx context.Context) (res *NoAdditionalPropertiesTest, err error) {
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("noAdditionalPropertiesTest"),
-		semconv.HTTPMethodKey.String("GET"),
+		semconv.HTTPRequestMethodKey.String("GET"),
 		semconv.HTTPRouteKey.String("/noAdditionalPropertiesTest"),
 	}
 
@@ -907,7 +911,7 @@ func (c *Client) NullableDefaultResponse(ctx context.Context) (*NilIntStatusCode
 func (c *Client) sendNullableDefaultResponse(ctx context.Context) (res *NilIntStatusCode, err error) {
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("nullableDefaultResponse"),
-		semconv.HTTPMethodKey.String("GET"),
+		semconv.HTTPRequestMethodKey.String("GET"),
 		semconv.HTTPRouteKey.String("/nullableDefaultResponse"),
 	}
 
@@ -986,7 +990,7 @@ func (c *Client) sendOneofBug(ctx context.Context, request *OneOfBugs) (res *One
 	}
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("oneofBug"),
-		semconv.HTTPMethodKey.String("POST"),
+		semconv.HTTPRequestMethodKey.String("POST"),
 		semconv.HTTPRouteKey.String("/oneofBug"),
 	}
 
@@ -1058,7 +1062,7 @@ func (c *Client) PatternRecursiveMapGet(ctx context.Context) (PatternRecursiveMa
 
 func (c *Client) sendPatternRecursiveMapGet(ctx context.Context) (res PatternRecursiveMap, err error) {
 	otelAttrs := []attribute.KeyValue{
-		semconv.HTTPMethodKey.String("GET"),
+		semconv.HTTPRequestMethodKey.String("GET"),
 		semconv.HTTPRouteKey.String("/patternRecursiveMap"),
 	}
 
@@ -1146,7 +1150,7 @@ func (c *Client) sendPetCreate(ctx context.Context, request OptPet) (res *Pet, e
 	}
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("petCreate"),
-		semconv.HTTPMethodKey.String("POST"),
+		semconv.HTTPRequestMethodKey.String("POST"),
 		semconv.HTTPRouteKey.String("/pet"),
 	}
 
@@ -1221,7 +1225,7 @@ func (c *Client) PetFriendsNamesByID(ctx context.Context, params PetFriendsNames
 func (c *Client) sendPetFriendsNamesByID(ctx context.Context, params PetFriendsNamesByIDParams) (res []string, err error) {
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("petFriendsNamesByID"),
-		semconv.HTTPMethodKey.String("GET"),
+		semconv.HTTPRequestMethodKey.String("GET"),
 		semconv.HTTPRouteKey.String("/pet/friendNames/{id}"),
 	}
 
@@ -1311,7 +1315,7 @@ func (c *Client) PetGet(ctx context.Context, params PetGetParams) (PetGetRes, er
 func (c *Client) sendPetGet(ctx context.Context, params PetGetParams) (res PetGetRes, err error) {
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("petGet"),
-		semconv.HTTPMethodKey.String("GET"),
+		semconv.HTTPRequestMethodKey.String("GET"),
 		semconv.HTTPRouteKey.String("/pet"),
 	}
 
@@ -1458,7 +1462,7 @@ func (c *Client) PetGetAvatarByID(ctx context.Context, params PetGetAvatarByIDPa
 func (c *Client) sendPetGetAvatarByID(ctx context.Context, params PetGetAvatarByIDParams) (res PetGetAvatarByIDRes, err error) {
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("petGetAvatarByID"),
-		semconv.HTTPMethodKey.String("GET"),
+		semconv.HTTPRequestMethodKey.String("GET"),
 		semconv.HTTPRouteKey.String("/pet/avatar"),
 	}
 
@@ -1548,7 +1552,7 @@ func (c *Client) PetGetAvatarByName(ctx context.Context, params PetGetAvatarByNa
 func (c *Client) sendPetGetAvatarByName(ctx context.Context, params PetGetAvatarByNameParams) (res PetGetAvatarByNameRes, err error) {
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("petGetAvatarByName"),
-		semconv.HTTPMethodKey.String("GET"),
+		semconv.HTTPRequestMethodKey.String("GET"),
 		semconv.HTTPRouteKey.String("/pet/{name}/avatar"),
 	}
 
@@ -1639,7 +1643,7 @@ func (c *Client) PetGetByName(ctx context.Context, params PetGetByNameParams) (*
 func (c *Client) sendPetGetByName(ctx context.Context, params PetGetByNameParams) (res *Pet, err error) {
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("petGetByName"),
-		semconv.HTTPMethodKey.String("GET"),
+		semconv.HTTPRequestMethodKey.String("GET"),
 		semconv.HTTPRouteKey.String("/pet/{name}"),
 	}
 
@@ -1729,7 +1733,7 @@ func (c *Client) PetNameByID(ctx context.Context, params PetNameByIDParams) (str
 func (c *Client) sendPetNameByID(ctx context.Context, params PetNameByIDParams) (res string, err error) {
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("petNameByID"),
-		semconv.HTTPMethodKey.String("GET"),
+		semconv.HTTPRequestMethodKey.String("GET"),
 		semconv.HTTPRouteKey.String("/pet/name/{id}"),
 	}
 
@@ -1832,7 +1836,7 @@ func (c *Client) sendPetUpdateNameAliasPost(ctx context.Context, request OptPetN
 		return res, errors.Wrap(err, "validate")
 	}
 	otelAttrs := []attribute.KeyValue{
-		semconv.HTTPMethodKey.String("POST"),
+		semconv.HTTPRequestMethodKey.String("POST"),
 		semconv.HTTPRouteKey.String("/pet/updateNameAlias"),
 	}
 
@@ -1928,7 +1932,7 @@ func (c *Client) sendPetUpdateNamePost(ctx context.Context, request OptString) (
 		return res, errors.Wrap(err, "validate")
 	}
 	otelAttrs := []attribute.KeyValue{
-		semconv.HTTPMethodKey.String("POST"),
+		semconv.HTTPRequestMethodKey.String("POST"),
 		semconv.HTTPRouteKey.String("/pet/updateName"),
 	}
 
@@ -2003,7 +2007,7 @@ func (c *Client) PetUploadAvatarByID(ctx context.Context, request PetUploadAvata
 func (c *Client) sendPetUploadAvatarByID(ctx context.Context, request PetUploadAvatarByIDReq, params PetUploadAvatarByIDParams) (res PetUploadAvatarByIDRes, err error) {
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("petUploadAvatarByID"),
-		semconv.HTTPMethodKey.String("POST"),
+		semconv.HTTPRequestMethodKey.String("POST"),
 		semconv.HTTPRouteKey.String("/pet/avatar"),
 	}
 
@@ -2093,7 +2097,7 @@ func (c *Client) RecursiveArrayGet(ctx context.Context) (RecursiveArray, error) 
 
 func (c *Client) sendRecursiveArrayGet(ctx context.Context) (res RecursiveArray, err error) {
 	otelAttrs := []attribute.KeyValue{
-		semconv.HTTPMethodKey.String("GET"),
+		semconv.HTTPRequestMethodKey.String("GET"),
 		semconv.HTTPRouteKey.String("/recursiveArray"),
 	}
 
@@ -2162,7 +2166,7 @@ func (c *Client) RecursiveMapGet(ctx context.Context) (*RecursiveMap, error) {
 
 func (c *Client) sendRecursiveMapGet(ctx context.Context) (res *RecursiveMap, err error) {
 	otelAttrs := []attribute.KeyValue{
-		semconv.HTTPMethodKey.String("GET"),
+		semconv.HTTPRequestMethodKey.String("GET"),
 		semconv.HTTPRouteKey.String("/recursiveMap"),
 	}
 
@@ -2232,7 +2236,7 @@ func (c *Client) SecurityTest(ctx context.Context) (string, error) {
 func (c *Client) sendSecurityTest(ctx context.Context) (res string, err error) {
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("securityTest"),
-		semconv.HTTPMethodKey.String("GET"),
+		semconv.HTTPRequestMethodKey.String("GET"),
 		semconv.HTTPRouteKey.String("/securityTest"),
 	}
 
@@ -2334,7 +2338,7 @@ func (c *Client) StringIntMapGet(ctx context.Context) (*StringIntMap, error) {
 
 func (c *Client) sendStringIntMapGet(ctx context.Context) (res *StringIntMap, err error) {
 	otelAttrs := []attribute.KeyValue{
-		semconv.HTTPMethodKey.String("GET"),
+		semconv.HTTPRequestMethodKey.String("GET"),
 		semconv.HTTPRouteKey.String("/stringIntMap"),
 	}
 
@@ -2413,7 +2417,7 @@ func (c *Client) sendTestFloatValidation(ctx context.Context, request *TestFloat
 	}
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("testFloatValidation"),
-		semconv.HTTPMethodKey.String("POST"),
+		semconv.HTTPRequestMethodKey.String("POST"),
 		semconv.HTTPRouteKey.String("/testFloatValidation"),
 	}
 
@@ -2486,7 +2490,7 @@ func (c *Client) TestInlineOneof(ctx context.Context) (*TestInlineOneOf, error) 
 func (c *Client) sendTestInlineOneof(ctx context.Context) (res *TestInlineOneOf, err error) {
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("testInlineOneof"),
-		semconv.HTTPMethodKey.String("GET"),
+		semconv.HTTPRequestMethodKey.String("GET"),
 		semconv.HTTPRouteKey.String("/testInlineOneof"),
 	}
 
@@ -2545,6 +2549,76 @@ func (c *Client) sendTestInlineOneof(ctx context.Context) (res *TestInlineOneOf,
 	return result, nil
 }
 
+// TestIssue1310 invokes testIssue1310 operation.
+//
+// GET /testIssue1310
+func (c *Client) TestIssue1310(ctx context.Context) (*Issue1310, error) {
+	res, err := c.sendTestIssue1310(ctx)
+	return res, err
+}
+
+func (c *Client) sendTestIssue1310(ctx context.Context) (res *Issue1310, err error) {
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("testIssue1310"),
+		semconv.HTTPRequestMethodKey.String("GET"),
+		semconv.HTTPRouteKey.String("/testIssue1310"),
+	}
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		elapsedDuration := time.Since(startTime)
+		c.duration.Record(ctx, float64(float64(elapsedDuration)/float64(time.Millisecond)), metric.WithAttributes(otelAttrs...))
+	}()
+
+	// Increment request counter.
+	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+
+	// Start a span for this request.
+	ctx, span := c.cfg.Tracer.Start(ctx, "TestIssue1310",
+		trace.WithAttributes(otelAttrs...),
+		clientSpanKind,
+	)
+	// Track stage for error reporting.
+	var stage string
+	defer func() {
+		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, stage)
+			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+		}
+		span.End()
+	}()
+
+	stage = "BuildURL"
+	u := uri.Clone(c.requestURL(ctx))
+	var pathParts [1]string
+	pathParts[0] = "/testIssue1310"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	stage = "EncodeRequest"
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	stage = "SendRequest"
+	resp, err := c.cfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	stage = "DecodeResponse"
+	result, err := decodeTestIssue1310Response(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
 // TestNullableOneofs invokes testNullableOneofs operation.
 //
 // GET /testNullableOneofs
@@ -2556,7 +2630,7 @@ func (c *Client) TestNullableOneofs(ctx context.Context) (TestNullableOneofsRes,
 func (c *Client) sendTestNullableOneofs(ctx context.Context) (res TestNullableOneofsRes, err error) {
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("testNullableOneofs"),
-		semconv.HTTPMethodKey.String("GET"),
+		semconv.HTTPRequestMethodKey.String("GET"),
 		semconv.HTTPRouteKey.String("/testNullableOneofs"),
 	}
 
@@ -2626,7 +2700,7 @@ func (c *Client) TestTuple(ctx context.Context) (*TupleTest, error) {
 func (c *Client) sendTestTuple(ctx context.Context) (res *TupleTest, err error) {
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("testTuple"),
-		semconv.HTTPMethodKey.String("GET"),
+		semconv.HTTPRequestMethodKey.String("GET"),
 		semconv.HTTPRouteKey.String("/testTuple"),
 	}
 
@@ -2696,7 +2770,7 @@ func (c *Client) TestTupleNamed(ctx context.Context) (*TupleNamedTest, error) {
 func (c *Client) sendTestTupleNamed(ctx context.Context) (res *TupleNamedTest, err error) {
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("testTupleNamed"),
-		semconv.HTTPMethodKey.String("GET"),
+		semconv.HTTPRequestMethodKey.String("GET"),
 		semconv.HTTPRouteKey.String("/testTupleNamed"),
 	}
 
@@ -2766,7 +2840,7 @@ func (c *Client) TestUniqueItems(ctx context.Context) (*UniqueItemsTest, error) 
 func (c *Client) sendTestUniqueItems(ctx context.Context) (res *UniqueItemsTest, err error) {
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("testUniqueItems"),
-		semconv.HTTPMethodKey.String("GET"),
+		semconv.HTTPRequestMethodKey.String("GET"),
 		semconv.HTTPRouteKey.String("/testUniqueItems"),
 	}
 
